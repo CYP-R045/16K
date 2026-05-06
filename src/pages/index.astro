@@ -1,0 +1,275 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import TrustBadges from '../components/TrustBadges.astro';
+import Footer from '../components/Footer.astro';
+
+const featured = [
+  { name: 'Dark Blue Jorts', size: 'W° 34', price: '$150', img: '/Dark_blue_Jorts.png', model: '/16kP1.png' },
+  { name: 'Black Jorts', size: 'W° 36', price: '$150', img: '/Black_Jorts.png', model: '/16kP3.png' },
+  { name: 'Light Blue Jorts', size: 'W° 36', price: '$150', img: '/Light_blue_jorts.png', model: '/16kP2.png' },
+];
+---
+<Layout title="16K">
+  <Nav />
+
+  <main>
+    <!-- Hero split -->
+    <section class="hero">
+      <div class="hero__half">
+        <img src="/16kP1.png" alt="16K Look" />
+      </div>
+      <div class="hero__half">
+        <img src="/16kP2.png" alt="16K Look" />
+      </div>
+      <div class="hero__overlay">
+        <h1 class="hero__title">16K</h1>
+        <p class="hero__sub">Custom 1 of 1's — made different.</p>
+        <a href="/shop" class="hero__btn">SHOP NOW</a>
+      </div>
+    </section>
+
+    <!-- Featured products — 3×3 grid -->
+    <section class="featured">
+      <h2 class="section-title">FEATURED PIECES</h2>
+      <div class="featured__grid">
+        {[...featured, ...featured, ...featured].map((p) => (
+          <a href="/shop" class="product-card">
+            <div class="product-card__img-wrap">
+              <img src={p.img} alt={p.name} class="product-card__img" />
+              <img src={p.model} alt={`${p.name} on model`} class="product-card__model" />
+              <div class="product-card__overlay"><span>VIEW PIECE</span></div>
+            </div>
+            <div class="product-card__info">
+              <p class="product-card__name">{p.name}</p>
+              <p class="product-card__size">{p.size}</p>
+              <p class="product-card__price">{p.price}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- 16K LOOKS auto-scrolling carousel -->
+    <section class="looks">
+      <h2 class="section-title">16K LOOKS</h2>
+      <div class="looks__belt">
+        <div class="looks__track">
+          {[...Array(3)].flatMap(() => ['/16kP1.png','/16kP2.png','/16kP3.png','/16kP4.png','/16kP5.png','/16kP6.png'].map((src) => (
+            <div class="look-item">
+              <img src={src} alt="16K Look" />
+            </div>
+          )))}
+        </div>
+      </div>
+    </section>
+
+    <TrustBadges />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  /* Hero split */
+  .hero {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero__half {
+    flex: 1;
+    overflow: hidden;
+  }
+  .hero__half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 3.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+    text-align: center;
+    gap: 0.85rem;
+  }
+
+  .hero__title {
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: #fff;
+  }
+  .hero__sub {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .hero__btn {
+    display: inline-block;
+    background: #fff;
+    color: #000;
+    padding: 0.85rem 2.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    border: 2px solid #fff;
+    transition: background 0.2s, color 0.2s;
+    margin-top: 0.25rem;
+  }
+  .hero__btn:hover { background: transparent; color: #fff; }
+
+  @media (max-width: 640px) {
+    .hero { height: 85vh; }
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Featured grid */
+  .featured {
+    padding: 3rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .featured__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 640px) {
+    .featured__grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  }
+
+  .product-card {
+    cursor: pointer;
+    display: block;
+  }
+  .product-card__img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+    aspect-ratio: 3/4;
+    margin-bottom: 0.75rem;
+  }
+  .product-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease, opacity 0.4s ease;
+  }
+  .product-card__model {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .product-card:hover .product-card__img { transform: scale(1.05); opacity: 0; }
+  .product-card:hover .product-card__model { opacity: 1; }
+  .product-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .product-card:hover .product-card__overlay { opacity: 1; }
+  .product-card__overlay span {
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    border: 1.5px solid #fff;
+    padding: 0.6rem 1.2rem;
+  }
+  .product-card__name { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .product-card__size { font-size: 0.8rem; color: #666; margin-bottom: 0.2rem; }
+  .product-card__price { font-size: 0.9rem; font-weight: 500; }
+
+  /* Looks carousel */
+  .looks {
+    padding: 0 0 3rem;
+  }
+  .looks .section-title {
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto 1.5rem;
+  }
+  .looks__belt {
+    overflow: hidden;
+  }
+  .looks__belt:hover .looks__track { animation-play-state: paused; }
+  .looks__track {
+    display: flex;
+    gap: 0.75rem;
+    width: max-content;
+    animation: looksScroll 24s linear infinite;
+    padding: 0 0.375rem;
+  }
+  @keyframes looksScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-100% / 3)); }
+  }
+  .look-item {
+    flex: 0 0 220px;
+    height: 320px;
+    overflow: hidden;
+    background: #f0f0f0;
+  }
+  .look-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .look-item:hover img { transform: scale(1.05); }
+
+  @media (max-width: 640px) {
+    .look-item { flex: 0 0 150px; height: 225px; }
+  }
+
+  /* Fade-up on scroll */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease var(--d, 0s), transform 0.6s ease var(--d, 0s);
+  }
+  .fade-up.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Scroll fade
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+</script>

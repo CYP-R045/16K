@@ -1,0 +1,315 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import TrustBadges from '../components/TrustBadges.astro';
+import Footer from '../components/Footer.astro';
+import { products } from '../data/products';
+---
+<Layout title="16K — Shop">
+  <Nav />
+
+  <div class="shop-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar__section">
+        <p class="sidebar__label">CATEGORY</p>
+        <ul class="sidebar__list">
+          <li><button class="filter-btn active" data-filter="category" data-value="all">All Items</button></li>
+          <li><button class="filter-btn" data-filter="category" data-value="jorts">Jorts</button></li>
+        </ul>
+      </div>
+
+      <div class="sidebar__section">
+        <p class="sidebar__label">WAIST SIZE</p>
+        <ul class="sidebar__list">
+          <li><button class="filter-btn active" data-filter="waist" data-value="all">All</button></li>
+          <li><button class="filter-btn" data-filter="waist" data-value="32">W° 32</button></li>
+          <li><button class="filter-btn" data-filter="waist" data-value="34">W° 34</button></li>
+          <li><button class="filter-btn" data-filter="waist" data-value="36">W° 36</button></li>
+        </ul>
+      </div>
+
+      <div class="sidebar__section">
+        <p class="sidebar__label">COLOR</p>
+        <div class="color-swatches">
+          <button class="swatch active" data-filter="color" data-value="all" title="All">
+            <span class="swatch__dot swatch__dot--all"></span>
+          </button>
+          <button class="swatch" data-filter="color" data-value="dark-blue" title="Dark Blue">
+            <span class="swatch__dot" style="background:#2c4a7c"></span>
+          </button>
+          <button class="swatch" data-filter="color" data-value="light-blue" title="Light Blue">
+            <span class="swatch__dot" style="background:#7aafd4"></span>
+          </button>
+          <button class="swatch" data-filter="color" data-value="black" title="Black">
+            <span class="swatch__dot" style="background:#111"></span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product grid -->
+    <section class="shop-main">
+      <div class="shop-header">
+        <h1 class="shop-title">SHOP ALL</h1>
+        <p class="shop-count"><span id="visibleCount">{products.length}</span> pieces</p>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        {products.map((p, i) => (
+          <a
+            href={`/product/${p.id}`}
+            class="product-card fade-up"
+            style={`--d:${i * 0.07}s`}
+            data-category={p.category}
+            data-color={p.color}
+            data-waist={p.waist}
+          >
+            <div class="product-card__img-wrap">
+              <img src={p.img} alt={p.name} class="product-card__img" loading="lazy" />
+              <img src={p.model} alt={`${p.name} on model`} class="product-card__model" loading="lazy" />
+              <div class="product-card__overlay">
+                <span>VIEW PIECE</span>
+              </div>
+            </div>
+            <div class="product-card__info">
+              <p class="product-card__name">{p.name}</p>
+              <p class="product-card__size">{p.size}</p>
+              <p class="product-card__price">{p.price}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <TrustBadges />
+  <Footer />
+</Layout>
+
+<style>
+  .shop-layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .sidebar__label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: #999;
+    margin-bottom: 0.75rem;
+  }
+
+  .sidebar__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .filter-btn {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+    padding: 0.3rem 0;
+    text-align: left;
+    width: 100%;
+    transition: color 0.2s;
+    letter-spacing: 0.02em;
+    border-bottom: 1.5px solid transparent;
+  }
+  .filter-btn:hover { color: #000; }
+  .filter-btn.active {
+    color: #000;
+    font-weight: 700;
+    border-bottom-color: #000;
+  }
+
+  .color-swatches {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    padding: 3px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .swatch.active { border-color: #000; }
+  .swatch__dot {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+  }
+  .swatch__dot--all {
+    background: conic-gradient(#2c4a7c 0deg 120deg, #7aafd4 120deg 240deg, #111 240deg 360deg);
+    border: none;
+  }
+
+  /* Main */
+  .shop-main { flex: 1; min-width: 0; }
+
+  .shop-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .shop-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  .shop-count {
+    font-size: 0.8rem;
+    color: #999;
+    font-weight: 500;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .shop-layout { flex-direction: column; }
+    .sidebar { width: 100%; position: static; flex-direction: row; flex-wrap: wrap; gap: 1.5rem; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .product-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  }
+
+  .product-card {
+    cursor: pointer;
+  }
+  .product-card.hidden-card {
+    display: none;
+  }
+
+  .product-card__img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+    aspect-ratio: 3/4;
+    margin-bottom: 0.75rem;
+  }
+  .product-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease, opacity 0.4s ease;
+  }
+  .product-card__model {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .product-card:hover .product-card__img { transform: scale(1.06); opacity: 0; }
+  .product-card:hover .product-card__model { opacity: 1; }
+
+  .product-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .product-card:hover .product-card__overlay { opacity: 1; }
+  .product-card__overlay span {
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    border: 1.5px solid #fff;
+    padding: 0.55rem 1.1rem;
+  }
+
+  .product-card__name { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .product-card__size { font-size: 0.78rem; color: #777; margin-bottom: 0.2rem; }
+  .product-card__price { font-size: 0.9rem; font-weight: 500; }
+
+  /* Fade-up */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease var(--d, 0s), transform 0.5s ease var(--d, 0s);
+  }
+  .fade-up.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Scroll fade
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); }),
+    { threshold: 0.05 }
+  );
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Filtering
+  const cards = Array.from(document.querySelectorAll('.product-card')) as HTMLElement[];
+  const countEl = document.getElementById('visibleCount');
+
+  let activeFilters: Record<string, string> = { category: 'all', waist: 'all', color: 'all' };
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const match =
+        (activeFilters.category === 'all' || card.dataset.category === activeFilters.category) &&
+        (activeFilters.waist === 'all'     || card.dataset.waist === activeFilters.waist) &&
+        (activeFilters.color === 'all'     || card.dataset.color === activeFilters.color);
+
+      card.classList.toggle('hidden-card', !match);
+      if (match) visible++;
+    });
+    if (countEl) countEl.textContent = String(visible);
+  }
+
+  document.querySelectorAll('.filter-btn, .swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = btn as HTMLElement;
+      const filterType = el.dataset.filter!;
+      const value = el.dataset.value!;
+
+      // Update active state within group
+      document.querySelectorAll(`[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+
+      activeFilters[filterType] = value;
+      applyFilters();
+    });
+  });
+</script>

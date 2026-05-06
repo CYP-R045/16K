@@ -1,0 +1,71 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+
+const looks = [
+  { bg: '#2a2a2a', label: 'Look 1' },
+  { bg: '#c0392b', label: 'Look 2' },
+  { bg: '#3d5a3e', label: 'Look 3' },
+  { bg: '#1a3a5c', label: 'Look 4' },
+  { bg: '#4a3728', label: 'Look 5' },
+  { bg: '#1a1a1a', label: 'Look 6' },
+];
+---
+<section class="looks">
+  <h2 class="looks__title">{title}</h2>
+  <div class="looks__strip">
+    {looks.map((look) => (
+      <div class="look-item" style={`background: ${look.bg}`}>
+        <span class="look-item__brand">16K</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .looks {
+    padding: 3rem 1.5rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .looks__title {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    margin-bottom: 1.25rem;
+  }
+
+  .looks__strip {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+  .looks__strip::-webkit-scrollbar { display: none; }
+
+  .look-item {
+    flex: 0 0 180px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .look-item { flex: 0 0 130px; height: 190px; }
+  }
+
+  .look-item__brand {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+</style>

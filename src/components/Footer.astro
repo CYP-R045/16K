@@ -1,0 +1,181 @@
+---
+---
+<footer class="footer">
+  <div class="footer__links">
+    <button class="policy-link" data-modal="shipping">Shipping Policy</button>
+    <button class="policy-link" data-modal="custom-order">Custom Order Policy</button>
+    <button class="policy-link" data-modal="refund">Refund Policy</button>
+    <button class="policy-link" data-modal="care">Garment Care</button>
+  </div>
+  <div class="footer__social">
+    <!-- Instagram -->
+    <a href="#" aria-label="Instagram">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+    </a>
+    <!-- TikTok -->
+    <a href="#" aria-label="TikTok">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/>
+      </svg>
+    </a>
+  </div>
+</footer>
+
+<!-- Policy modal -->
+<div class="modal-overlay" id="policyOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal__close" id="modalClose" aria-label="Close">✕</button>
+    <h2 class="modal__title" id="modalTitle"></h2>
+    <div class="modal__body" id="modalBody"></div>
+  </div>
+</div>
+
+<style>
+  .footer {
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 2rem;
+  }
+
+  .policy-link {
+    font-size: 0.75rem;
+    color: #555;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+    cursor: pointer;
+    font-family: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .policy-link:hover { color: #000; }
+
+  .footer__social {
+    display: flex;
+    gap: 1rem;
+    color: #333;
+  }
+  .footer__social a { transition: opacity 0.2s; }
+  .footer__social a:hover { opacity: 0.6; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+  }
+
+  .modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.1rem;
+    padding: 4px 8px;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.15s;
+  }
+  .modal__close:hover { color: #000; }
+
+  .modal__title {
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    padding-right: 2rem;
+  }
+
+  .modal__body {
+    font-size: 0.85rem;
+    color: #444;
+    line-height: 1.7;
+  }
+  .modal__body p { margin-bottom: 0.75rem; }
+  .modal__body p:last-child { margin-bottom: 0; }
+</style>
+
+<script>
+  const policies: Record<string, { title: string; body: string }> = {
+    shipping: {
+      title: 'Shipping Policy',
+      body: `<p>All orders are processed within 5–7 business days. Shipping times may vary depending on your location.</p>
+             <p>Once your order ships, you will receive a tracking number via email. We are not responsible for delays caused by the carrier.</p>
+             <p>More details coming soon.</p>`,
+    },
+    'custom-order': {
+      title: 'Custom Order Policy',
+      body: `<p>Every piece we make is built to order — nothing is mass-produced. When you place a custom order, you are commissioning a one-of-a-kind garment made specifically for you.</p>
+             <p>Custom orders typically take 2–4 weeks from confirmation to delivery. We will be in contact throughout the process.</p>
+             <p>Full policy details coming soon.</p>`,
+    },
+    refund: {
+      title: 'Refund Policy',
+      body: `<p>Due to the custom and limited nature of our pieces, all sales are final. We do not accept returns or exchanges.</p>
+             <p>If your item arrives damaged or defective, please contact us within 48 hours of delivery and we will make it right.</p>
+             <p>Full policy details coming soon.</p>`,
+    },
+    care: {
+      title: 'Garment Care',
+      body: `<p>To preserve the quality of your piece, we recommend cold machine wash or hand wash only. Do not tumble dry.</p>
+             <p>Hang or lay flat to dry. Iron on low heat if needed. Dry cleaning is also safe for most pieces.</p>
+             <p>Detailed care instructions are included with every order.</p>`,
+    },
+  };
+
+  const overlay = document.getElementById('policyOverlay')!;
+  const modalTitle = document.getElementById('modalTitle')!;
+  const modalBody = document.getElementById('modalBody')!;
+  const modalClose = document.getElementById('modalClose')!;
+
+  document.querySelectorAll<HTMLButtonElement>('.policy-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.modal!;
+      const policy = policies[key];
+      if (!policy) return;
+      modalTitle.textContent = policy.title;
+      modalBody.innerHTML = policy.body;
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  const closeModal = () => {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  modalClose.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>

@@ -1,0 +1,94 @@
+---
+const products = [
+  { name: 'Dark Blue Jorts', size: 'W° 34', price: '$150', color: '#4a6fa5' },
+  { name: 'Dark Blue Jorts', size: 'W° 32', price: '$150', color: '#4a6fa5' },
+  { name: 'Light Blue Jorts', size: 'W° 36', price: '$150', color: '#8bafd4' },
+  { name: 'Light Blue Jorts', size: 'W° 32', price: '$150', color: '#8bafd4' },
+  { name: 'Black Jorts', size: 'W° 36', price: '$150', color: '#1a1a1a' },
+  { name: 'Black Jorts', size: 'W° 34', price: '$150', color: '#1a1a1a' },
+];
+---
+<section class="shop">
+  <h2 class="shop__title">SHOP ALL</h2>
+  <div class="product-grid">
+    {products.map((p) => (
+      <div class="product-card">
+        <div class="product-card__img" style={`background: ${p.color}`}>
+          <span class="product-card__brand">16K</span>
+        </div>
+        <div class="product-card__info">
+          <p class="product-card__name">{p.name}</p>
+          <p class="product-card__size">{p.size}</p>
+          <p class="product-card__price">{p.price}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .shop {
+    padding: 3rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .shop__title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    margin-bottom: 2rem;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  }
+
+  .product-card {
+    cursor: pointer;
+  }
+
+  .product-card__img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-card__brand {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+
+  .product-card__info { padding: 0 0.25rem; }
+
+  .product-card__name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .product-card__size {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.2rem;
+  }
+
+  .product-card__price {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+</style>

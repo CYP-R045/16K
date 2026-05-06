@@ -1,0 +1,143 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = '16K' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style is:global>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-family: 'Inter', sans-serif; background: #fff; color: #000; }
+      body { min-height: 100vh; }
+      a { text-decoration: none; color: inherit; }
+      button { cursor: pointer; border: none; background: none; font-family: inherit; }
+      img { display: block; max-width: 100%; }
+    </style>
+  </head>
+  <body>
+    <!-- Intro overlay -->
+    <div class="intro" id="intro">
+      <video
+        class="intro__video"
+        id="introVideo"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      >
+        <source src="/logo.mp4" type="video/mp4" />
+      </video>
+      <p class="intro__hint">tap to enter</p>
+    </div>
+
+    <div class="site-content" id="siteContent">
+      <slot />
+    </div>
+
+    <style>
+      .intro {
+        position: fixed;
+        inset: 0;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        cursor: pointer;
+        transition: opacity 0.6s ease;
+      }
+      .intro.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .intro__video {
+        width: min(900px, 85vw);
+        height: auto;
+        object-fit: contain;
+        transform-origin: center center;
+        will-change: transform;
+        transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .intro__hint {
+        margin-top: 2.5rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #999;
+        animation: pulse 2s ease-in-out infinite;
+        transition: opacity 0.3s;
+      }
+      .intro__hint.hidden { opacity: 0; }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+      }
+
+      .site-content {
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+      .site-content.visible {
+        opacity: 1;
+      }
+    </style>
+
+    <script>
+      const intro = document.getElementById('intro');
+      const introVideo = document.getElementById('introVideo') as HTMLVideoElement;
+      const siteContent = document.getElementById('siteContent');
+      const hint = document.querySelector('.intro__hint') as HTMLElement;
+      const navVideo = document.getElementById('navVideo') as HTMLVideoElement;
+
+      function skipIntro() {
+        intro?.remove();
+        siteContent?.classList.add('visible');
+        navVideo?.play();
+      }
+
+      // Force play (browsers sometimes block the autoplay attribute)
+      introVideo?.play().catch(() => {});
+
+      // If already seen this session, skip immediately
+      if (sessionStorage.getItem('16k-intro-seen')) {
+        skipIntro();
+      } else {
+        intro?.addEventListener('click', () => {
+          sessionStorage.setItem('16k-intro-seen', '1');
+          hint.classList.add('hidden');
+
+          const navLogo = document.getElementById('navLogo');
+          const videoRect = introVideo.getBoundingClientRect();
+          const navRect = navLogo!.getBoundingClientRect();
+
+          const tx = (navRect.left + navRect.width / 2) - (videoRect.left + videoRect.width / 2);
+          const ty = (navRect.top + navRect.height / 2) - (videoRect.top + videoRect.height / 2);
+          const scale = navRect.width / videoRect.width;
+
+          introVideo.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+
+          setTimeout(() => {
+            intro?.classList.add('fade-out');
+            siteContent?.classList.add('visible');
+            navVideo?.play();
+          }, 900);
+
+          setTimeout(() => intro?.remove(), 1600);
+        });
+      }
+    </script>
+  </body>
+</html>

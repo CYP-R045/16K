@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Development Contract — 16K</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Georgia', serif;
+      background: #fff;
+      color: #111;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2.5rem;
+      line-height: 1.75;
+    }
+
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #111;
+      padding-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .header p {
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 0.4rem;
+      letter-spacing: 0.04em;
+    }
+
+    .parties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .party-block h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #999;
+      margin-bottom: 0.5rem;
+    }
+    .party-block p {
+      font-size: 0.9rem;
+    }
+
+    h2 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #999;
+      margin: 2rem 0 0.75rem;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 1.5rem;
+    }
+
+    p, li {
+      font-size: 0.92rem;
+      color: #222;
+    }
+
+    ul {
+      padding-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    li {
+      margin-bottom: 0.35rem;
+    }
+
+    .scope-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
+    }
+    .scope-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #999;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0.5rem 0.75rem;
+    }
+    .scope-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+    .scope-table tr:last-child td {
+      border-bottom: none;
+    }
+    .scope-table .amount {
+      text-align: right;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .total-row {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .total-box {
+      border: 2px solid #111;
+      padding: 1rem 1.5rem;
+      text-align: right;
+      min-width: 220px;
+    }
+    .total-box .label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #999;
+    }
+    .total-box .amount {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+    .total-box .note {
+      font-size: 0.72rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    .payment-schedule {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+    .payment-item {
+      border: 1px solid #e0e0e0;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+    }
+    .payment-item strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+    }
+    .payment-item span {
+      font-size: 0.75rem;
+      color: #777;
+    }
+
+    .signatures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 3rem;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 2.5rem;
+    }
+    .sig-block p {
+      font-size: 0.78rem;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 2.5rem;
+    }
+    .sig-line {
+      border-top: 1px solid #111;
+      margin-bottom: 0.4rem;
+    }
+    .sig-label {
+      font-size: 0.72rem;
+      color: #777;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #bbb;
+      margin-top: 3rem;
+      letter-spacing: 0.05em;
+    }
+
+    @media print {
+      body { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Web Development Contract</h1>
+    <p>Project: 16K — Brand Website &nbsp;|&nbsp; Date: April 29, 2026</p>
+  </div>
+
+  <div class="parties">
+    <div class="party-block">
+      <h3>Developer</h3>
+      <p>
+        <strong>Cyprian Ozoede</strong><br />
+        adedijoakinloluwa@gmail.com
+      </p>
+    </div>
+    <div class="party-block">
+      <h3>Client</h3>
+      <p>
+        <strong>16K Brand</strong><br />
+        ___________________________<br />
+        <span style="font-size:0.78rem;color:#999;">(Client name / contact)</span>
+      </p>
+    </div>
+  </div>
+
+  <h2>Project Overview</h2>
+  <p>
+    The Developer designed and built a complete custom website for the 16K brand, including
+    an animated brand intro, interactive product shop, responsive layout, and all features
+    listed in the Scope of Work below. All work was delivered as a production-ready Astro web
+    application.
+  </p>
+
+  <h2>Scope of Work</h2>
+  <table class="scope-table">
+    <thead>
+      <tr>
+        <th style="width:55%">Deliverable</th>
+        <th>Description</th>
+        <th class="amount">Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Animated Brand Intro</td>
+        <td>Full-screen video onboarding with fly-to-nav logo transition and session-aware skip</td>
+        <td class="amount">$400</td>
+      </tr>
+      <tr>
+        <td>Split-Screen Hero</td>
+        <td>Full-viewport two-image hero with gradient overlay, brand title, and CTA button</td>
+        <td class="amount">$250</td>
+      </tr>
+      <tr>
+        <td>Auto-Scrolling 16K Looks Carousel</td>
+        <td>Infinite-loop image strip with hover-pause, seamless looping, mobile responsive</td>
+        <td class="amount">$200</td>
+      </tr>
+      <tr>
+        <td>Featured Pieces Grid</td>
+        <td>3×3 product grid with hover overlay and link-through to shop</td>
+        <td class="amount">$150</td>
+      </tr>
+      <tr>
+        <td>Shop Page + Live Filter System</td>
+        <td>Full product grid with real-time filtering by category, waist size, and color swatch</td>
+        <td class="amount">$450</td>
+      </tr>
+      <tr>
+        <td>Product Hover Model Reveal</td>
+        <td>Crossfade from product flat-lay to model shot on hover across all product cards</td>
+        <td class="amount">$250</td>
+      </tr>
+      <tr>
+        <td>Navigation Drawer</td>
+        <td>Slide-in sidebar with Home, Shop, Instagram, Contact links + custom order form</td>
+        <td class="amount">$200</td>
+      </tr>
+      <tr>
+        <td>Bug Fixes &amp; Polish</td>
+        <td>Autoplay fix, scroll fade-in animations, responsive breakpoints, cross-browser testing</td>
+        <td class="amount">$150</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="total-row">
+    <div class="total-box">
+      <div class="label">Total Project Fee</div>
+      <div class="amount">$2,050</div>
+      <div class="note">USD — all features listed above</div>
+    </div>
+  </div>
+
+  <h2>Payment Schedule</h2>
+  <div class="payment-schedule">
+    <div class="payment-item">
+      <strong>$1,025 — 50%</strong>
+      <span>Due upon signing this contract (deposit)</span>
+    </div>
+    <div class="payment-item">
+      <strong>$1,025 — 50%</strong>
+      <span>Due upon final delivery &amp; site handover</span>
+    </div>
+  </div>
+
+  <h2>Payment Method</h2>
+  <p>
+    Accepted via bank transfer, CashApp, or Zelle. Payment details to be provided separately.
+    A late fee of 5% per 14-day period will apply to outstanding balances after the due date.
+  </p>
+
+  <h2>Revisions</h2>
+  <p>
+    This contract covers up to <strong>2 rounds</strong> of revisions per section. Additional
+    revision rounds beyond that are billed at <strong>$75/hour</strong>.
+  </p>
+
+  <h2>Ownership &amp; Intellectual Property</h2>
+  <p>
+    Upon receipt of full payment, the Client owns all design and code produced under this
+    contract. The Developer retains the right to display the project in their portfolio.
+  </p>
+
+  <h2>Timeline</h2>
+  <p>
+    All deliverables listed in the Scope of Work have been completed. Final handover of source
+    files and deployment credentials takes place upon receipt of the final payment instalment.
+  </p>
+
+  <h2>Termination</h2>
+  <p>
+    If the Client terminates this contract after work has begun, the deposit is non-refundable.
+    Any completed milestones beyond the deposit will be invoiced at the rates above.
+  </p>
+
+  <div class="signatures">
+    <div class="sig-block">
+      <p>Developer</p>
+      <div class="sig-line"></div>
+      <div class="sig-label">Cyprian Ozoede &nbsp;|&nbsp; Date: ___________</div>
+    </div>
+    <div class="sig-block">
+      <p>Client</p>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name: ___________________ &nbsp;|&nbsp; Date: ___________</div>
+    </div>
+  </div>
+
+  <p class="footer-note">16K Web Development Contract &nbsp;·&nbsp; Confidential</p>
+
+</body>
+</html>
