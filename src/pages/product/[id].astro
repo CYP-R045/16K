@@ -2,16 +2,25 @@
 import Layout from '../../layouts/Layout.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import { products } from '../../data/products';
+import { getAllProducts, getProductByHandle, productMeta, formatPrice } from '../../lib/shopify';
 
-export function getStaticPaths() {
-  return products.map(p => ({ params: { id: String(p.id) } }));
+export async function getStaticPaths() {
+  const products = await getAllProducts();
+  return products.map((p: any) => ({ params: { id: p.handle } }));
 }
 
 const { id } = Astro.params;
-const product = products.find(p => p.id === Number(id))!;
+const product = await getProductByHandle(id!);
+
+if (!product) return Astro.redirect('/shop');
+
+const meta     = productMeta[product.handle] ?? { models: [], color: 'unknown', category: 'jorts' };
+const shopifyImgs: string[] = product.images.edges.map((e: any) => e.node.url);
+const gallery  = [...shopifyImgs, ...meta.models].filter(Boolean);
+const variants = product.variants.edges.map((e: any) => e.node);
+const price    = formatPrice(product.priceRange.minVariantPrice.amount, product.priceRange.minVariantPrice.currencyCode);
 ---
-<Layout title={`16K — ${product.name}`}>
+<Layout title={`16K — ${product.title}`}>
   <Nav />
 
   <main class="pdp">
@@ -21,21 +30,12 @@ const product = products.find(p => p.id === Number(id))!;
       <!-- Gallery -->
       <div class="pdp__gallery">
         <div class="pdp__main-wrap">
-          <img
-            id="mainImg"
-            src={product.gallery[0]}
-            alt={product.name}
-            class="pdp__main-img"
-          />
+          <img id="mainImg" src={gallery[0]} alt={product.title} class="pdp__main-img" />
         </div>
         <div class="pdp__thumbs">
-          {product.gallery.map((src, i) => (
-            <button
-              class={`pdp__thumb${i === 0 ? ' active' : ''}`}
-              data-src={src}
-              aria-label={`View image ${i + 1}`}
-            >
-              <img src={src} alt={`${product.name} view ${i + 1}`} />
+          {gallery.map((src: string, i: number) => (
+            <button class={`pdp__thumb${i === 0 ? ' active' : ''}`} data-src={src} aria-label={`View image ${i + 1}`}>
+              <img src={src} alt={`${product.title} view ${i + 1}`} />
             </button>
           ))}
         </div>
@@ -44,19 +44,35 @@ const product = products.find(p => p.id === Number(id))!;
       <!-- Info -->
       <div class="pdp__info">
         <p class="pdp__category">16K ORIGINALS</p>
-        <h1 class="pdp__name">{product.name.toUpperCase()}</h1>
-        <p class="pdp__size">{product.size}</p>
-        <p class="pdp__price">{product.price}</p>
+        <h1 class="pdp__name">{product.title.toUpperCase()}</h1>
+        <p class="pdp__price">{price}</p>
+
+        <!-- Variant picker -->
+        {variants.length > 1 && (
+          <div class="pdp__variants">
+            <p class="pdp__variants-label">SIZE</p>
+            <div class="pdp__variant-btns">
+              {variants.map((v: any, i: number) => (
+                <button
+                  class={`variant-btn${i === 0 ? ' active' : ''}`}
+                  data-variant-id={v.id}
+                  disabled={!v.availableForSale}
+                >
+                  {v.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <p class="pdp__desc">{product.description}</p>
+
         <button
           class="pdp__btn"
           id="addToCart"
-          data-id={product.id}
-          data-name={product.name}
-          data-size={product.size}
-          data-price={product.price}
-          data-img={product.img}
+          data-variant-id={variants[0]?.id}
         >ADD TO CART</button>
+
         <p class="pdp__note">Custom piece — made to order. Allow 2–4 weeks.</p>
       </div>
     </div>
@@ -71,7 +87,6 @@ const product = products.find(p => p.id === Number(id))!;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
   }
-
   .pdp__back {
     display: inline-block;
     font-size: 0.75rem;
@@ -90,7 +105,6 @@ const product = products.find(p => p.id === Number(id))!;
     align-items: start;
   }
 
-  /* Gallery */
   .pdp__main-wrap {
     aspect-ratio: 3/4;
     overflow: hidden;
@@ -126,10 +140,9 @@ const product = products.find(p => p.id === Number(id))!;
     object-position: top center;
   }
   .pdp__thumb.active { border-color: #000; }
-  .pdp__thumb:hover { border-color: #999; }
+  .pdp__thumb:hover  { border-color: #999; }
   .pdp__thumb.active:hover { border-color: #000; }
 
-  /* Info */
   .pdp__info {
     display: flex;
     flex-direction: column;
@@ -137,31 +150,46 @@ const product = products.find(p => p.id === Number(id))!;
     position: sticky;
     top: 90px;
   }
-
   .pdp__category {
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.25em;
     color: #999;
   }
-
   .pdp__name {
     font-size: clamp(1.6rem, 3vw, 2.4rem);
     font-weight: 900;
     letter-spacing: 0.04em;
     line-height: 1.1;
   }
-
-  .pdp__size {
-    font-size: 0.9rem;
-    color: #555;
-    font-weight: 500;
-  }
-
   .pdp__price {
     font-size: 1.3rem;
     font-weight: 700;
   }
+
+  /* Variant picker */
+  .pdp__variants { border-top: 1px solid #e5e5e5; padding-top: 1rem; }
+  .pdp__variants-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    color: #999;
+    margin-bottom: 0.6rem;
+  }
+  .pdp__variant-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .variant-btn {
+    padding: 0.45rem 1rem;
+    border: 1.5px solid #ddd;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: inherit;
+    background: #fff;
+  }
+  .variant-btn:hover  { border-color: #000; }
+  .variant-btn.active { border-color: #000; background: #000; color: #fff; }
+  .variant-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
   .pdp__desc {
     font-size: 0.875rem;
@@ -170,7 +198,6 @@ const product = products.find(p => p.id === Number(id))!;
     border-top: 1px solid #e5e5e5;
     padding-top: 1rem;
   }
-
   .pdp__btn {
     margin-top: 0.5rem;
     background: #000;
@@ -186,6 +213,7 @@ const product = products.find(p => p.id === Number(id))!;
     border: none;
   }
   .pdp__btn:hover { opacity: 0.75; }
+  .pdp__btn:disabled { opacity: 0.5; cursor: default; }
 
   .pdp__note {
     font-size: 0.72rem;
@@ -195,10 +223,7 @@ const product = products.find(p => p.id === Number(id))!;
   }
 
   @media (max-width: 700px) {
-    .pdp__layout {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
+    .pdp__layout { grid-template-columns: 1fr; gap: 2rem; }
     .pdp__info { position: static; }
   }
 </style>
@@ -208,33 +233,46 @@ const product = products.find(p => p.id === Number(id))!;
 
   // Gallery swap
   const mainImg = document.getElementById('mainImg') as HTMLImageElement;
-  const thumbs = document.querySelectorAll<HTMLButtonElement>('.pdp__thumb');
+  const thumbs  = document.querySelectorAll<HTMLButtonElement>('.pdp__thumb');
 
   thumbs.forEach(thumb => {
     thumb.addEventListener('click', () => {
       const src = thumb.dataset.src!;
-      if (mainImg.src.endsWith(src)) return;
+      if (mainImg.src === src) return;
       mainImg.classList.add('swapping');
-      setTimeout(() => {
-        mainImg.src = src;
-        mainImg.classList.remove('swapping');
-      }, 250);
+      setTimeout(() => { mainImg.src = src; mainImg.classList.remove('swapping'); }, 250);
       thumbs.forEach(t => t.classList.remove('active'));
       thumb.classList.add('active');
     });
   });
 
-  // Add to cart
-  const btn = document.getElementById('addToCart') as HTMLButtonElement;
-  btn.addEventListener('click', () => {
-    const { id, name, size, price, img } = btn.dataset;
-    addToCart({ id: Number(id), name: name!, size: size!, price: price!, img: img! });
+  // Variant selection
+  const variantBtns = document.querySelectorAll<HTMLButtonElement>('.variant-btn');
+  const addToCartBtn = document.getElementById('addToCart') as HTMLButtonElement;
 
-    btn.textContent = 'ADDED ✓';
-    btn.style.opacity = '0.6';
-    setTimeout(() => {
-      btn.textContent = 'ADD TO CART';
-      btn.style.opacity = '';
-    }, 1800);
+  variantBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      variantBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      addToCartBtn.dataset.variantId = btn.dataset.variantId;
+    });
+  });
+
+  // Add to cart
+  addToCartBtn.addEventListener('click', async () => {
+    const variantId = addToCartBtn.dataset.variantId!;
+    addToCartBtn.disabled = true;
+    addToCartBtn.textContent = 'ADDING...';
+    try {
+      await addToCart(variantId);
+      addToCartBtn.textContent = 'ADDED ✓';
+      setTimeout(() => {
+        addToCartBtn.textContent = 'ADD TO CART';
+        addToCartBtn.disabled = false;
+      }, 1800);
+    } catch (e) {
+      addToCartBtn.textContent = 'TRY AGAIN';
+      addToCartBtn.disabled = false;
+    }
   });
 </script>

@@ -3,7 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import TrustBadges from '../components/TrustBadges.astro';
 import Footer from '../components/Footer.astro';
-import { products } from '../data/products';
+import { getAllProducts, productMeta, formatPrice } from '../lib/shopify';
+
+const rawProducts = await getAllProducts();
+const products = rawProducts.map((p: any) => {
+  const meta  = productMeta[p.handle] ?? { models: [], color: 'unknown', category: 'jorts' };
+  const img   = p.images.edges[0]?.node.url ?? '';
+  const price = formatPrice(p.priceRange.minVariantPrice.amount, p.priceRange.minVariantPrice.currencyCode);
+  return { handle: p.handle, name: p.title, price, img, model: meta.models[0] ?? img, color: meta.color, category: meta.category };
+});
 ---
 <Layout title="16K — Shop">
   <Nav />
@@ -56,25 +64,23 @@ import { products } from '../data/products';
       </div>
 
       <div class="product-grid" id="productGrid">
-        {products.map((p, i) => (
+        {products.map((p: any, i: number) => (
           <a
-            href={`/product/${p.id}`}
+            href={`/product/${p.handle}`}
             class="product-card fade-up"
             style={`--d:${i * 0.07}s`}
             data-category={p.category}
             data-color={p.color}
-            data-waist={p.waist}
           >
             <div class="product-card__img-wrap">
               <img src={p.img} alt={p.name} class="product-card__img" loading="lazy" />
-              <img src={p.model} alt={`${p.name} on model`} class="product-card__model" loading="lazy" />
+              {p.model && <img src={p.model} alt={`${p.name} on model`} class="product-card__model" loading="lazy" />}
               <div class="product-card__overlay">
                 <span>VIEW PIECE</span>
               </div>
             </div>
             <div class="product-card__info">
               <p class="product-card__name">{p.name}</p>
-              <p class="product-card__size">{p.size}</p>
               <p class="product-card__price">{p.price}</p>
             </div>
           </a>
@@ -219,20 +225,9 @@ import { products } from '../data/products';
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease, opacity 0.4s ease;
+    transition: transform 0.5s ease;
   }
-  .product-card__model {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-  .product-card:hover .product-card__img { transform: scale(1.06); opacity: 0; }
-  .product-card:hover .product-card__model { opacity: 1; }
+  .product-card:hover .product-card__img { transform: scale(1.06); }
 
   .product-card__overlay {
     position: absolute;

@@ -3,65 +3,30 @@ import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 ---
-<Layout title="16K — Checkout">
+<Layout title="16K — Cart">
   <Nav />
 
   <main class="checkout">
     <a href="/shop" class="checkout__back">← Continue shopping</a>
     <h1 class="checkout__title">YOUR CART</h1>
 
-    <!-- Cart items (rendered by JS) -->
-    <div class="checkout__layout">
-      <div class="checkout__items" id="cartItems">
-        <!-- populated by script -->
-      </div>
+    <div class="checkout__layout" id="cartLayout">
+      <div class="checkout__items" id="cartItems"></div>
 
       <div class="checkout__sidebar">
-        <div class="checkout__summary" id="cartSummary">
-          <!-- populated by script -->
-        </div>
-
-        <form class="checkout__form" id="orderForm" novalidate>
-          <p class="checkout__form-title">ORDER DETAILS</p>
-
-          <div class="field">
-            <label for="fname">Full Name</label>
-            <input type="text" id="fname" name="fname" placeholder="Your name" required />
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="your@email.com" required />
-          </div>
-          <div class="field">
-            <label for="address">Shipping Address</label>
-            <input type="text" id="address" name="address" placeholder="Street, City, Country" required />
-          </div>
-          <div class="field">
-            <label for="notes">Order Notes <span>(optional)</span></label>
-            <textarea id="notes" name="notes" placeholder="Any custom requests..."></textarea>
-          </div>
-
-          <button type="submit" class="checkout__submit" id="placeOrder">PLACE ORDER</button>
-          <p class="checkout__note">This is a custom order — we'll reach out to confirm details before production begins.</p>
-        </form>
+        <div class="checkout__summary" id="cartSummary"></div>
+        <button class="checkout__submit" id="checkoutBtn">PROCEED TO CHECKOUT</button>
+        <p class="checkout__note">You'll complete payment securely on Shopify.</p>
       </div>
     </div>
 
-    <!-- Empty state -->
     <div class="checkout__empty" id="cartEmpty" style="display:none">
       <p>Your cart is empty.</p>
       <a href="/shop" class="checkout__shop-link">SHOP NOW</a>
     </div>
 
-    <!-- Confirmation -->
-    <div class="checkout__confirm" id="orderConfirm" style="display:none">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-        <polyline points="22 4 12 14.01 9 11.01"/>
-      </svg>
-      <h2>Order Received</h2>
-      <p>Thanks — we'll be in touch shortly to confirm your custom order.</p>
-      <a href="/shop" class="checkout__shop-link">KEEP SHOPPING</a>
+    <div class="checkout__loading" id="cartLoading">
+      <p>Loading cart...</p>
     </div>
   </main>
 
@@ -74,7 +39,6 @@ import Footer from '../components/Footer.astro';
     margin: 0 auto;
     padding: 2rem 1.5rem 5rem;
   }
-
   .checkout__back {
     display: inline-block;
     font-size: 0.75rem;
@@ -95,17 +59,12 @@ import Footer from '../components/Footer.astro';
 
   .checkout__layout {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 340px;
     gap: 3rem;
     align-items: start;
   }
 
-  /* Cart items */
-  .checkout__items {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
+  .checkout__items { display: flex; flex-direction: column; gap: 1.25rem; }
 
   .cart-row {
     display: grid;
@@ -122,17 +81,8 @@ import Footer from '../components/Footer.astro';
     object-position: top;
     background: #f5f5f5;
   }
-  .cart-row__name {
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    margin-bottom: 0.25rem;
-  }
-  .cart-row__size {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 0.5rem;
-  }
+  .cart-row__name { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .cart-row__variant { font-size: 0.8rem; color: #666; margin-bottom: 0.5rem; }
   .cart-row__qty {
     display: flex;
     align-items: center;
@@ -150,13 +100,10 @@ import Footer from '../components/Footer.astro';
     cursor: pointer;
     transition: border-color 0.15s;
     line-height: 1;
+    background: none;
   }
   .cart-row__qty button:hover { border-color: #000; }
-  .cart-row__price {
-    font-size: 0.95rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
+  .cart-row__price { font-size: 0.95rem; font-weight: 600; white-space: nowrap; }
   .cart-row__remove {
     font-size: 0.7rem;
     color: #aaa;
@@ -171,24 +118,24 @@ import Footer from '../components/Footer.astro';
   }
   .cart-row__remove:hover { color: #000; }
 
-  /* Sidebar */
   .checkout__sidebar {
     position: sticky;
     top: 90px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
   }
-
   .checkout__summary {
     border: 1px solid #e5e5e5;
     padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
   .summary-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    margin-bottom: 0.6rem;
     color: #555;
   }
   .summary-row--total {
@@ -197,47 +144,8 @@ import Footer from '../components/Footer.astro';
     color: #000;
     border-top: 1px solid #e5e5e5;
     padding-top: 0.75rem;
-    margin-top: 0.75rem;
-    margin-bottom: 0;
+    margin-top: 0.15rem;
   }
-
-  /* Form */
-  .checkout__form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .checkout__form-title {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.2em;
-    color: #999;
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-  .field label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: #555;
-  }
-  .field label span { font-weight: 400; color: #aaa; }
-  .field input,
-  .field textarea {
-    border: 1.5px solid #ddd;
-    padding: 0.65rem 0.75rem;
-    font-size: 0.875rem;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-  }
-  .field input:focus,
-  .field textarea:focus { border-color: #000; }
-  .field textarea { height: 90px; resize: none; }
 
   .checkout__submit {
     background: #000;
@@ -251,7 +159,6 @@ import Footer from '../components/Footer.astro';
     font-family: inherit;
     border: none;
     transition: opacity 0.2s;
-    margin-top: 0.25rem;
   }
   .checkout__submit:hover { opacity: 0.75; }
   .checkout__submit:disabled { opacity: 0.4; cursor: default; }
@@ -259,11 +166,10 @@ import Footer from '../components/Footer.astro';
   .checkout__note {
     font-size: 0.7rem;
     color: #aaa;
-    line-height: 1.6;
     text-align: center;
+    line-height: 1.6;
   }
 
-  /* Empty */
   .checkout__empty {
     text-align: center;
     padding: 5rem 0;
@@ -272,42 +178,25 @@ import Footer from '../components/Footer.astro';
     align-items: center;
     gap: 1.5rem;
     color: #666;
-    font-size: 0.9rem;
   }
-
-  /* Confirmation */
-  .checkout__confirm {
-    text-align: center;
-    padding: 5rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  .checkout__confirm h2 {
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-  }
-  .checkout__confirm p {
-    font-size: 0.875rem;
-    color: #555;
-    max-width: 340px;
-    line-height: 1.6;
-  }
-
   .checkout__shop-link {
-    display: inline-block;
     background: #000;
     color: #fff;
     padding: 0.85rem 2rem;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.15em;
-    margin-top: 0.5rem;
     transition: opacity 0.2s;
   }
   .checkout__shop-link:hover { opacity: 0.75; }
+
+  .checkout__loading {
+    text-align: center;
+    padding: 5rem 0;
+    color: #999;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
 
   @media (max-width: 720px) {
     .checkout__layout { grid-template-columns: 1fr; }
@@ -316,98 +205,98 @@ import Footer from '../components/Footer.astro';
 </style>
 
 <script>
-  import { getCart, saveCart, clearCart } from '../scripts/cart';
+  import { getCart, updateCartLine, removeCartLine } from '../scripts/cart';
 
+  const layoutEl  = document.getElementById('cartLayout')!;
   const itemsEl   = document.getElementById('cartItems')!;
   const summaryEl = document.getElementById('cartSummary')!;
-  const layoutEl  = document.querySelector<HTMLElement>('.checkout__layout')!;
   const emptyEl   = document.getElementById('cartEmpty')!;
-  const confirmEl = document.getElementById('orderConfirm')!;
-  const form      = document.getElementById('orderForm') as HTMLFormElement;
+  const loadingEl = document.getElementById('cartLoading')!;
+  const checkoutBtn = document.getElementById('checkoutBtn') as HTMLButtonElement;
 
-  function priceNum(str: string) {
-    return Number(str.replace(/[^0-9.]/g, ''));
+  let checkoutUrl = '';
+
+  function fmt(amount: string, currency: string) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(Number(amount));
   }
 
-  function render() {
-    const cart = getCart();
+  async function render() {
+    loadingEl.style.display = 'block';
+    layoutEl.style.display  = 'none';
+    emptyEl.style.display   = 'none';
 
-    if (cart.length === 0) {
-      layoutEl.style.display = 'none';
-      emptyEl.style.display  = 'flex';
+    const cart = await getCart();
+
+    loadingEl.style.display = 'none';
+
+    if (!cart || cart.totalQuantity === 0) {
+      emptyEl.style.display = 'flex';
       return;
     }
 
+    checkoutUrl = cart.checkoutUrl;
     layoutEl.style.display = '';
-    emptyEl.style.display  = 'none';
 
-    // Items
-    itemsEl.innerHTML = cart.map(item => `
-      <div class="cart-row" data-id="${item.id}">
-        <img src="${item.img}" alt="${item.name}" class="cart-row__img" />
-        <div>
-          <p class="cart-row__name">${item.name.toUpperCase()}</p>
-          <p class="cart-row__size">${item.size}</p>
-          <div class="cart-row__qty">
-            <button class="qty-dec" data-id="${item.id}">−</button>
-            <span>${item.qty}</span>
-            <button class="qty-inc" data-id="${item.id}">+</button>
+    const lines = cart.lines.edges.map((e: any) => e.node);
+
+    itemsEl.innerHTML = lines.map((line: any) => {
+      const v = line.merchandise;
+      const img = v.product.images.edges[0]?.node.url ?? '';
+      const lineTotal = fmt(String(Number(v.price.amount) * line.quantity), v.price.currencyCode);
+      return `
+        <div class="cart-row">
+          ${img ? `<img src="${img}" alt="${v.product.title}" class="cart-row__img" />` : '<div class="cart-row__img"></div>'}
+          <div>
+            <p class="cart-row__name">${v.product.title.toUpperCase()}</p>
+            <p class="cart-row__variant">${v.title !== 'Default Title' ? v.title : ''}</p>
+            <div class="cart-row__qty">
+              <button class="qty-dec" data-line="${line.id}" data-qty="${line.quantity}">−</button>
+              <span>${line.quantity}</span>
+              <button class="qty-inc" data-line="${line.id}" data-qty="${line.quantity}">+</button>
+            </div>
+            <button class="cart-row__remove" data-line="${line.id}">Remove</button>
           </div>
-          <button class="cart-row__remove" data-id="${item.id}">Remove</button>
+          <p class="cart-row__price">${lineTotal}</p>
         </div>
-        <p class="cart-row__price">$${priceNum(item.price) * item.qty}</p>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
-    // Summary
-    const subtotal = cart.reduce((s, i) => s + priceNum(i.price) * i.qty, 0);
+    const total = fmt(cart.cost.totalAmount.amount, cart.cost.totalAmount.currencyCode);
     summaryEl.innerHTML = `
-      <div class="summary-row"><span>Subtotal</span><span>$${subtotal}</span></div>
-      <div class="summary-row"><span>Shipping</span><span>Calculated at contact</span></div>
-      <div class="summary-row summary-row--total"><span>TOTAL</span><span>$${subtotal}</span></div>
+      <div class="summary-row"><span>Items (${cart.totalQuantity})</span><span>${total}</span></div>
+      <div class="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div>
+      <div class="summary-row summary-row--total"><span>TOTAL</span><span>${total}</span></div>
     `;
 
     // Qty controls
     document.querySelectorAll<HTMLButtonElement>('.qty-dec').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = Number(btn.dataset.id);
-        const cart = getCart();
-        const item = cart.find(i => i.id === id)!;
-        if (item.qty > 1) { item.qty -= 1; saveCart(cart); }
-        else { saveCart(cart.filter(i => i.id !== id)); }
+      btn.addEventListener('click', async () => {
+        const qty = Number(btn.dataset.qty);
+        if (qty <= 1) { await removeCartLine(btn.dataset.line!); }
+        else { await updateCartLine(btn.dataset.line!, qty - 1); }
         render();
       });
     });
 
     document.querySelectorAll<HTMLButtonElement>('.qty-inc').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = Number(btn.dataset.id);
-        const cart = getCart();
-        const item = cart.find(i => i.id === id)!;
-        item.qty += 1;
-        saveCart(cart);
+      btn.addEventListener('click', async () => {
+        await updateCartLine(btn.dataset.line!, Number(btn.dataset.qty) + 1);
         render();
       });
     });
 
     document.querySelectorAll<HTMLButtonElement>('.cart-row__remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = Number(btn.dataset.id);
-        saveCart(getCart().filter(i => i.id !== id));
+      btn.addEventListener('click', async () => {
+        await removeCartLine(btn.dataset.line!);
         render();
       });
     });
   }
 
   render();
-  window.addEventListener('cart-updated', render);
+  window.addEventListener('cart-updated', () => render());
 
-  // Place order
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    layoutEl.style.display = 'none';
-    emptyEl.style.display  = 'none';
-    confirmEl.style.display = 'flex';
-    clearCart();
+  checkoutBtn.addEventListener('click', () => {
+    if (checkoutUrl) window.location.href = checkoutUrl;
   });
 </script>
