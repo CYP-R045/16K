@@ -63,12 +63,30 @@ export async function getCart() {
     `query($id: ID!) { cart(id: $id) { ${CART_FIELDS} } }`,
     { id: cartId }
   );
+  // Cart expired or was checked out — wipe the stale ID
+  if (!data.cart) {
+    localStorage.removeItem(CART_ID_KEY);
+    localStorage.removeItem(CART_COUNT_KEY);
+  }
   return data.cart;
 }
 
 export async function addToCart(variantId: string, quantity = 1) {
-  const cartId = localStorage.getItem(CART_ID_KEY);
+  let cartId = localStorage.getItem(CART_ID_KEY);
   let cart: any;
+
+  if (cartId) {
+    // Verify the cart still exists before adding to it
+    const check = await gql(
+      `query($id: ID!) { cart(id: $id) { id } }`,
+      { id: cartId }
+    );
+    if (!check.cart) {
+      // Cart expired — clear it and create a fresh one below
+      localStorage.removeItem(CART_ID_KEY);
+      cartId = null;
+    }
+  }
 
   if (cartId) {
     const data = await gql(
